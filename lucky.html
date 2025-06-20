@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>赛博中考祈福空间</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --neon-blue: #0ff;
+            --neon-pink: #f0f;
+            --neon-purple: #a0f;
+            --dark-bg: #0a0a1a;
+            --card-bg: rgba(20, 15, 45, 0.8);
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--dark-bg), #101030);
+            color: #e0e0ff;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* 粒子效果容器 */
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem 1rem;
+            position: relative;
+        }
+
+        .title-container {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 1.5rem;
+        }
+
+        h1 {
+            font-size: 4rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(90deg, var(--neon-pink), var(--neon-blue), var(--neon-purple));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 10px rgba(160, 100, 255, 0.5);
+            position: relative;
+            z-index: 2;
+        }
+
+        .subtitle {
+            font-size: 1.8rem;
+            color: #a0a0ff;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 0 10px rgba(100, 150, 255, 0.7);
+        }
+
+        .decoration {
+            position: absolute;
+            font-size: 8rem;
+            opacity: 0.1;
+            z-index: 1;
+            color: var(--neon-blue);
+        }
+
+        .decoration-1 {
+            top: -40px;
+            left: -60px;
+        }
+
+        .decoration-2 {
+            bottom: -40px;
+            right: -60px;
+            transform: rotate(180deg);
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--neon-purple);
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 0 25px rgba(160, 100, 255, 0.3);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 35px rgba(160, 100, 255, 0.5);
+        }
+
+        .card h2 {
+            font-size: 2.2rem;
+            margin-bottom: 1.5rem;
+            color: var(--neon-blue);
+            text-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
+            position: relative;
+            display: inline-block;
+            padding-bottom: 10px;
+        }
+
+        .card h2:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--neon-blue), transparent);
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #a0a0ff;
+            font-size: 1.1rem;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(10, 5, 30, 0.7);
+            border: 1px solid var(--neon-purple);
+            border-radius: 8px;
+            color: #e0e0ff;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
+        }
+
+        .btn {
+            background: linear-gradient(90deg, var(--neon-pink), var(--neon-purple));
+            color: white;
+            border: none;
+            padding: 14px 35px;
+            font-size: 1.2rem;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: block;
+            margin: 2rem auto 0;
+            width: 100%;
+            max-width: 300px;
+            box-shadow: 0 0 20px rgba(160, 100, 255, 0.5);
+            position: relative;
+            overflow: hidden;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 30px rgba(160, 100, 255, 0.8);
+            background: linear-gradient(90deg, var(--neon-purple), var(--neon-pink));
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -60%;
+            width: 20px;
+            height: 200%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(30deg);
+            transition: all 0.6s;
+        }
+
+        .btn:hover::after {
+            left: 120%;
+        }
+
+        .blessing-result {
+            background: rgba(10, 5, 30, 0.5);
+            border: 1px solid var(--neon-blue);
+            border-radius: 10px;
+            padding: 1.5rem;
+            min-height: 200px;
+            margin-top: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .blessing-content {
+            text-align: center;
+            font-size: 1.8rem;
+            line-height: 1.8;
+            padding: 1.5rem 0;
+            color: var(--neon-blue);
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+        }
+
+        .blessing-author {
+            text-align: right;
+            font-size: 1.4rem;
+            color: var(--neon-pink);
+            margin-top: 1rem;
+            font-style: italic;
+        }
+
+        .energy-container {
+            margin: 2rem 0;
+        }
+
+        .energy-bar {
+            height: 30px;
+            background: rgba(20, 20, 50, 0.7);
+            border-radius: 15px;
+            border: 1px solid var(--neon-purple);
+            overflow: hidden;
+            position: relative;
+            margin-top: 10px;
+        }
+
+        .energy-fill {
+            height: 100%;
+            width: 0;
+            background: linear-gradient(90deg, var(--neon-pink), var(--neon-blue));
+            border-radius: 15px;
+            transition: width 2s ease-in-out;
+            position: relative;
+        }
+
+        .energy-text {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+            text-shadow: 0 0 5px #000;
+        }
+
+        .quote-container {
+            text-align: center;
+            padding: 1.5rem;
+            border: 1px solid var(--neon-blue);
+            border-radius: 10px;
+            margin: 2rem 0;
+            background: rgba(0, 30, 60, 0.3);
+        }
+
+        .quote-text {
+            font-size: 1.8rem;
+            font-style: italic;
+            color: var(--neon-blue);
+            margin-bottom: 1rem;
+            text-shadow: 0 0 8px rgba(0, 255, 255, 0.3);
+        }
+
+        .quote-author {
+            font-size: 1.2rem;
+            color: var(--neon-pink);
+        }
+
+        .grid-section {
+            margin-top: 3rem;
+        }
+
+        .grid-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            color: var(--neon-blue);
+            text-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+        }
+
+        .cyber-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .grid-item {
+            background: rgba(30, 25, 60, 0.6);
+            border: 1px solid var(--neon-purple);
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .grid-item:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 20px rgba(160, 100, 255, 0.4);
+            background: rgba(50, 40, 90, 0.8);
+        }
+
+        .grid-item i {
+            font-size: 3rem;
+            color: var(--neon-blue);
+            margin-bottom: 1rem;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+
+        .grid-item h3 {
+            color: var(--neon-pink);
+            margin-bottom: 0.8rem;
+            font-size: 1.8rem;
+        }
+
+        .grid-item p {
+            font-size: 1.1rem;
+            color: #c0c0ff;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 4rem;
+            padding: 2rem;
+            border-top: 1px solid rgba(160, 100, 255, 0.3);
+            color: #a0a0ff;
+            font-size: 1rem;
+        }
+
+        .footer-text {
+            margin-bottom: 0.5rem;
+        }
+
+        /* 动画效果 */
+        @keyframes float {
+            0% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-15px);
+            }
+            100% {
+                transform: translateY(0px);
+            }
+        }
+
+        .floating {
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0% {
+                text-shadow: 0 0 5px var(--neon-blue);
+            }
+            100% {
+                text-shadow: 0 0 20px var(--neon-blue), 0 0 30px var(--neon-pink);
+            }
+        }
+
+        .glow {
+            animation: glow 1.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 1s ease-out;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.8rem;
+            }
+            
+            .subtitle {
+                font-size: 1.4rem;
+            }
+            
+            .card h2 {
+                font-size: 1.8rem;
+            }
+            
+            .blessing-content {
+                font-size: 1.5rem;
+            }
+            
+            .quote-text {
+                font-size: 1.5rem;
+            }
+            
+            .grid-title {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .subtitle {
+                font-size: 1.2rem;
+            }
+            
+            .card {
+                padding: 1.5rem;
+            }
+            
+            .blessing-content {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 粒子背景 -->
+    <div id="particles-js"></div>
+
+    <div class="container">
+        <header>
+            <div class="title-container">
+                <i class="fas fa-graduation-cap decoration decoration-1"></i>
+                <h1 class="floating">赛博中考祈福空间</h1>
+                <i class="fas fa-laptop-code decoration decoration-2"></i>
+                <p class="subtitle glow">为中考学子注入数字能量，助你金榜题名！</p>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <div class="card fade-in">
+                <h2><i class="fas fa-hands-praying"></i> 发送你的祈福</h2>
+                <div class="input-group">
+                    <label for="name"><i class="fas fa-user"></i> 你的名字</label>
+                    <input type="text" id="name" placeholder="输入你的名字">
+                </div>
+                <div class="input-group">
+                    <label for="student"><i class="fas fa-user-graduate"></i> 中考学子</label>
+                    <input type="text" id="student" placeholder="输入中考学子姓名">
+                </div>
+                <div class="input-group">
+                    <label for="subject"><i class="fas fa-book"></i> 祈福科目</label>
+                    <select id="subject">
+                        <option value="all">所有科目</option>
+                        <option value="chinese">语文</option>
+                        <option value="math">数学</option>
+                        <option value="english">英语</option>
+                        <option value="physics">物理</option>
+                        <option value="chemistry">化学</option>
+                        <option value="history">历史</option>
+                        <option value="politics">道德与法治</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="wish"><i class="fas fa-comment"></i> 你的祝福</label>
+                    <textarea id="wish" rows="3" placeholder="写下你的祝福和鼓励..."></textarea>
+                </div>
+                <button id="pray-btn" class="btn"><i class="fas fa-paper-plane"></i> 发送赛博祝福</button>
+            </div>
+
+            <div class="card fade-in">
+                <h2><i class="fas fa-bolt"></i> 能量注入</h2>
+                <div class="energy-container">
+                    <label>中考能量充能进度</label>
+                    <div class="energy-bar">
+                        <div class="energy-fill" id="energy-fill">
+                            <div class="energy-text" id="energy-text">0%</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="quote-container">
+                    <div class="quote-text" id="quote-text">努力是通向成功的唯一捷径</div>
+                    <div class="quote-author" id="quote-author">- 中考励志语录 -</div>
+                </div>
+                
+                <h2><i class="fas fa-star"></i> 生成的祝福</h2>
+                <div class="blessing-result">
+                    <div class="blessing-content" id="blessing-content">
+                        你的祝福将在这里显现...
+                    </div>
+                    <div class="blessing-author" id="blessing-author"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid-section">
+            <h2 class="grid-title">中考能量核心</h2>
+            <div class="cyber-grid">
+                <div class="grid-item">
+                    <i class="fas fa-brain"></i>
+                    <h3>智慧</h3>
+                    <p>愿你的思维如量子计算机般敏捷</p>
+                </div>
+                <div class="grid-item">
+                    <i class="fas fa-bolt"></i>
+                    <h3>速度</h3>
+                    <p>解题速度如光纤传输般迅捷</p>
+                </div>
+                <div class="grid-item">
+                    <i class="fas fa-shield-alt"></i>
+                    <h3>稳定</h3>
+                    <p>心态如服务器般稳定运行</p>
+                </div>
+                <div class="grid-item">
+                    <i class="fas fa-memory"></i>
+                    <h3>记忆</h3>
+                    <p>知识如云存储般永久不忘</p>
+                </div>
+                <div class="grid-item">
+                    <i class="fas fa-lightbulb"></i>
+                    <h3>灵感</h3>
+                    <p>灵感如数据流般源源不断</p>
+                </div>
+                <div class="grid-item">
+                    <i class="fas fa-trophy"></i>
+                    <h3>成功</h3>
+                    <p>金榜题名，前程似锦</p>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p class="footer-text">赛博中考祈福空间 © 2025 | 数字世界中的真诚祝福</p>
+            <p class="footer-text">每一次点击都是能量的传递，每一次祈愿都是希望的编码</p>
+            <p class="footer-text">祝所有中考学子：超常发挥，金榜题名！</p>
+        </footer>
+    </div>
+
+    <!-- 粒子效果库 -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    
+    <script>
+        // 初始化粒子背景
+        particlesJS('particles-js', {
+            particles: {
+                number: { value: 100, density: { enable: true, value_area: 800 } },
+                color: { value: "#5a46ff" },
+                shape: { type: "circle" },
+                opacity: { value: 0.5, random: true },
+                size: { value: 3, random: true },
+                line_linked: {
+                    enable: true,
+                    distance: 150,
+                    color: "#5a46ff",
+                    opacity: 0.4,
+                    width: 1
+                },
+                move: {
+                    enable: true,
+                    speed: 2,
+                    direction: "none",
+                    random: true,
+                    straight: false,
+                    out_mode: "out",
+                    bounce: false
+                }
+            },
+            interactivity: {
+                detect_on: "canvas",
+                events: {
+                    onhover: { enable: true, mode: "grab" },
+                    onclick: { enable: true, mode: "push" },
+                    resize: true
+                },
+                modes: {
+                    grab: { distance: 140, line_linked: { opacity: 1 } },
+                    push: { particles_nb: 4 }
+                }
+            },
+            retina_detect: true
+        });
+
+        // 中考祝福功能
+        const prayBtn = document.getElementById('pray-btn');
+        const nameInput = document.getElementById('name');
+        const studentInput = document.getElementById('student');
+        const subjectSelect = document.getElementById('subject');
+        const wishInput = document.getElementById('wish');
+        const blessingContent = document.getElementById('blessing-content');
+        const blessingAuthor = document.getElementById('blessing-author');
+        const energyFill = document.getElementById('energy-fill');
+        const energyText = document.getElementById('energy-text');
+        const quoteText = document.getElementById('quote-text');
+        const quoteAuthor = document.getElementById('quote-author');
+        
+        // 励志语录库
+        const quotes = [
+            { text: "努力是通向成功的唯一捷径", author: "中考励志语录" },
+            { text: "今日拼搏努力，他朝谁与争锋", author: "中考励志语录" },
+            { text: "不为失败找理由，要为成功找方法", author: "中考励志语录" },
+            { text: "拼一个春夏秋冬，换一生无怨无悔", author: "中考励志语录" },
+            { text: "宝剑锋从磨砺出，梅花香自苦寒来", author: "《警世贤文》" },
+            { text: "只要路是对的，就不怕路远", author: "中考励志语录" },
+            { text: "知识改变命运，奋斗成就未来", author: "中考励志语录" },
+            { text: "没有艰辛的汗水，便没有成功的泪水", author: "中考励志语录" }
+        ];
+        
+        // 学科祝福语
+        const subjectBlessings = {
+            all: "所有科目全面发挥",
+            chinese: "文思泉涌，下笔如有神",
+            math: "思路清晰，解题如破竹",
+            english: "词汇如流，语法精准",
+            physics: "洞察物理规律，解题势如破竹",
+            chemistry: "化学反应尽在掌握",
+            history: "历史脉络清晰，答题精准",
+            politics: "理论联系实际，分析透彻"
+        };
+        
+        // 祈福语库
+        const blessings = [
+            "愿你如超级计算机般精准答题",
+            "愿你的思维如量子纠缠般敏捷",
+            "考场如战场，愿你如AI般战无不胜",
+            "愿你笔下生花，代码般精确无误",
+            "愿你的努力如数据写入，永不丢失",
+            "智慧如云存储，随取随用",
+            "心态如防火墙，稳定无波动",
+            "解题如算法优化，高效精准"
+        ];
+        
+        // 随机选择励志语录
+        function getRandomQuote() {
+            return quotes[Math.floor(Math.random() * quotes.length)];
+        }
+        
+        // 更新励志语录
+        function updateQuote() {
+            const quote = getRandomQuote();
+            quoteText.textContent = quote.text;
+            quoteAuthor.textContent = "- " + quote.author + " -";
+        }
+        
+        // 初始更新语录
+        updateQuote();
+        // 每30秒更换一次语录
+        setInterval(updateQuote, 30000);
+        
+        // 能量充能效果
+        function chargeEnergy() {
+            let progress = 0;
+            const targetProgress = 100;
+            const interval = setInterval(() => {
+                progress += 1;
+                energyFill.style.width = progress + "%";
+                energyText.textContent = progress + "%";
+                
+                if (progress >= targetProgress) {
+                    clearInterval(interval);
+                    energyText.textContent = "能量已充满！";
+                }
+            }, 20);
+        }
+        
+        // 发送祈福
+        prayBtn.addEventListener('click', function() {
+            const name = nameInput.value || "神秘人";
+            const student = studentInput.value || "中考学子";
+            const subject = subjectSelect.value;
+            const wish = wishInput.value || "愿你考出理想成绩！";
+            
+            if (!studentInput.value) {
+                studentInput.style.borderColor = "#ff00cc";
+                studentInput.style.boxShadow = "0 0 10px rgba(255, 0, 204, 0.5)";
+                return;
+            }
+            
+            // 随机选择一个祝福语
+            const randomBlessing = blessings[Math.floor(Math.random() * blessings.length)];
+            const subjectBlessing = subjectBlessings[subject];
+            
+            // 创建祝福显示
+            blessingContent.innerHTML = `${randomBlessing}<br><span style="color:#ff00cc">${subjectBlessing}</span>`;
+            blessingAuthor.textContent = `${name} 为 ${student} 祈福：${wish}`;
+            
+            // 充能效果
+            energyFill.style.width = "0%";
+            energyText.textContent = "0%";
+            chargeEnergy();
+            
+            // 添加粒子特效
+            createParticles();
+            
+            // 重置输入框样式
+            studentInput.style.borderColor = "#a0f";
+            studentInput.style.boxShadow = "none";
+        });
+        
+        // 为网格项添加点击事件
+        document.querySelectorAll('.grid-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const category = this.querySelector('h3').textContent;
+                const message = this.querySelector('p').textContent;
+                
+                blessingContent.innerHTML = `为你的中考注入<span style="color:#ff00cc">${category}</span>能量<br>${message}`;
+                blessingAuthor.textContent = "赛博祈福空间特别祝福";
+                
+                // 充能效果
+                energyFill.style.width = "0%";
+                energyText.textContent = "0%";
+                chargeEnergy();
+                
+                // 添加粒子特效
+                createParticles();
+            });
+        });
+        
+        // 创建粒子特效
+        function createParticles() {
+            const particleCount = 50;
+            const container = document.querySelector('.blessing-result');
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.style.position = 'absolute';
+                particle.style.width = '6px';
+                particle.style.height = '6px';
+                particle.style.backgroundColor = getRandomColor();
+                particle.style.borderRadius = '50%';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.pointerEvents = 'none';
+                particle.style.zIndex = '5';
+                particle.style.boxShadow = '0 0 8px currentColor';
+                
+                container.appendChild(particle);
+                
+                // 动画
+                const animation = particle.animate([
+                    { transform: 'translate(0, 0)', opacity: 1 },
+                    { transform: `translate(${Math.random() * 200 - 100}px, ${Math.random() * 100 - 150}px)`, opacity: 0 }
+                ], {
+                    duration: 1000 + Math.random() * 1000,
+                    easing: 'ease-out'
+                });
+                
+                animation.onfinish = () => {
+                    particle.remove();
+                };
+            }
+        }
+        
+        function getRandomColor() {
+            const colors = ['#ff00cc', '#5a46ff', '#00ccff', '#00ffcc'];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+        
+        // 初始能量充能
+        window.addEventListener('load', chargeEnergy);
+    </script>
+</body>
+</html>
