@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Class7名字匹配工具</title>
+    <title>Class14名字匹配工具</title>
     <style>
         * {
             margin: 0;
@@ -182,8 +182,46 @@
             margin-bottom: 15px;
             display: flex;
             justify-content: space-between;
+            align-items: center;
             padding-bottom: 8px;
             border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .title-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .copy-btn {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 6px;
+            padding: 6px 10px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: #666;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .copy-btn:hover {
+            background: white;
+            color: #333;
+            border-color: #3498db;
+            transform: scale(1.05);
+        }
+        
+        .copy-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .copy-btn.success {
+            background: #2ecc71;
+            color: white;
+            border-color: #27ae60;
         }
         
         .count-badge {
@@ -343,7 +381,12 @@
                     <div class="result-box matched">
                         <div class="result-title">
                             <span>已匹配的名字</span>
-                            <span class="count-badge" id="matchedCount">0</span>
+                            <div class="title-actions">
+                                <span class="count-badge" id="matchedCount">0</span>
+                                <button class="copy-btn" id="copyMatchedBtn" title="复制已匹配的名字">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
                         </div>
                         <div class="name-list" id="matchedList">
                             <!-- 匹配的名字会动态显示在这里 -->
@@ -353,7 +396,12 @@
                     <div class="result-box unmatched">
                         <div class="result-title">
                             <span>未匹配的名字</span>
-                            <span class="count-badge" id="unmatchedCount">0</span>
+                            <div class="title-actions">
+                                <span class="count-badge" id="unmatchedCount">0</span>
+                                <button class="copy-btn" id="copyUnmatchedBtn" title="复制未匹配的名字">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
                         </div>
                         <div class="name-list" id="unmatchedList">
                             <!-- 未匹配的名字会动态显示在这里 -->
@@ -363,7 +411,7 @@
             </div>
             
             <div class="panel names-list-container">
-                <h2 class="panel-title"><i class="fas fa-list"></i> 预设名单 (共 <span id="totalNames">61</span> 个名字)</h2>
+                <h2 class="panel-title"><i class="fas fa-list"></i> 预设名单 (共 <span id="totalNames">59</span> 个名字)</h2>
                 <div class="names-grid" id="namesList">
                     <!-- 名单会动态显示在这里 -->
                 </div>
@@ -376,11 +424,11 @@
                 <div class="stat-label">匹配的名字数量</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value" id="statTotal">61</div>
+                <div class="stat-value" id="statTotal">59</div>
                 <div class="stat-label">名单总数量</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value stat-unmatched" id="statUnmatched">61</div>
+                <div class="stat-value stat-unmatched" id="statUnmatched">59</div>
                 <div class="stat-label">未匹配的名字数量</div>
             </div>
         </div>
@@ -393,12 +441,12 @@
     <script>
         // 预设名单
         const names = [
-            "田晗煜", "姚晟睿", "叶文婷", "孙翊轩", "王博源", "陈羿安", "张紫昕", "周欣妍", "谢清然", "胡越佳",
-            "周玥彤", "吴雨轩", "吴芷悠", "沈君昊", "王子宸", "母奕航", "吴优", "叶佳瑶", "李雨涵", "范昱安",
-            "艾姝涵", "尹嘉毅", "伍彦帆", "喻李程", "金羽馨", "郑雅文", "孙耀文", "詹博洋", "孙晟睿", "张若莲",
-            "尹浩宇", "余婧雯", "李思瑶", "孟思丞", "刘格齐", "易明博", "周煜宸", "刘骐豪", "曹灿", "戴锦浩",
-            "艾卓澜", "鲁泉豫", "张可羽", "陈锦康", "温粤涵", "陈薪宇", "王蔚宁", "熊珂乐", "熊鸿宇", "周胡瑾妍",
-            "张翌天", "陈绘如", "邱天岚", "汪恬宇", "涂耿宇", "程森然", "戴铭泽", "乐子嫣"
+            "鲍筱晓", "边康瑞", "陈浩阳", "陈浩宇", "陈彦锦", "单晋鹏", "董立为", "董沛琪", "付文浩", "付欣妍",
+            "何晨彤", "胡靖曦", "胡凌萱", "胡煜珂", "黄诗玥", "姜明昊", "雷子煊", "李家诚", "李旻宇", "李诗雨",
+            "林珑", "刘宇辰", "罗文博", "吕泽皓", "彭晨洋", "余皓轩", "申思恺", "沈君昊", "孙晨晨", "孙沁桉",
+            "童思语", "汪杰辰", "王朝", "王沐熙", "王睿宏", "王若文", "王胜尧", "王一峰", "温笑薇", "肖涵",
+            "肖睦佳", "谢雨潇", "徐皓朗", "鄢俊武", "杨森宇", "杨泽皓", "杨圳杰", "杨忠依", "叶慧琳", "叶锦",
+            "叶文婷", "余天择", "张峻寅", "张书懿", "郑思源", "郑雅月", "周煜昕", "朱泽丰", "徐力岩"
         ];
         
         // DOM 元素
@@ -415,6 +463,8 @@
         const statMatched = document.getElementById('statMatched');
         const statUnmatched = document.getElementById('statUnmatched');
         const statTotal = document.getElementById('statTotal');
+        const copyMatchedBtn = document.getElementById('copyMatchedBtn');
+        const copyUnmatchedBtn = document.getElementById('copyUnmatchedBtn');
         
         // 初始化名单显示
         function initNamesList() {
@@ -488,17 +538,75 @@
         // 加载示例文本
         function loadExample() {
             inputText.value = `在今天的班级活动中，我们看到了许多同学积极参与的身影。
-田晗煜同学负责活动策划，周欣妍和李雨涵负责现场布置。
-王博源、陈羿安、张紫昕三位同学负责活动主持。
-此外，我们还看到吴雨轩、王子宸、叶佳瑶等同学积极参与游戏环节。
-特别感谢范昱安、熊珂乐同学在后勤工作中的出色表现。
-希望下次活动能看到更多同学参与，比如周胡瑾妍、陈绘如等同学。`;
+鲍筱晓同学负责活动策划，陈浩阳和李诗雨负责现场布置。
+王沐熙、陈彦锦、张峻寅三位同学负责活动主持。
+此外，我们还看到胡靖曦、刘宇辰、叶文婷等同学积极参与游戏环节。
+特别感谢肖涵、杨森宇同学在后勤工作中的出色表现。
+希望下次活动能看到更多同学参与，比如郑思源、周煜昕等同学。`;
+        }
+        
+        // 复制文本到剪贴板
+        async function copyToClipboard(text, button) {
+            try {
+                await navigator.clipboard.writeText(text);
+                // 显示成功反馈
+                const originalText = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-check"></i>';
+                button.classList.add('success');
+                
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.classList.remove('success');
+                }, 2000);
+            } catch (err) {
+                // 降级方案：使用传统方法
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                // 显示成功反馈
+                const originalText = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-check"></i>';
+                button.classList.add('success');
+                
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.classList.remove('success');
+                }, 2000);
+            }
+        }
+        
+        // 复制已匹配的名字
+        function copyMatchedNames() {
+            const matchedNames = Array.from(matchedList.children).map(item => item.textContent);
+            if (matchedNames.length === 0) {
+                alert('没有已匹配的名字可以复制！');
+                return;
+            }
+            const text = matchedNames.join('\n');
+            copyToClipboard(text, copyMatchedBtn);
+        }
+        
+        // 复制未匹配的名字
+        function copyUnmatchedNames() {
+            const unmatchedNames = Array.from(unmatchedList.children).map(item => item.textContent);
+            if (unmatchedNames.length === 0) {
+                alert('没有未匹配的名字可以复制！');
+                return;
+            }
+            const text = unmatchedNames.join('\n');
+            copyToClipboard(text, copyUnmatchedBtn);
         }
         
         // 事件监听
         checkBtn.addEventListener('click', checkNames);
         clearBtn.addEventListener('click', clearText);
         exampleBtn.addEventListener('click', loadExample);
+        copyMatchedBtn.addEventListener('click', copyMatchedNames);
+        copyUnmatchedBtn.addEventListener('click', copyUnmatchedNames);
         
         // 初始化
         initNamesList();
