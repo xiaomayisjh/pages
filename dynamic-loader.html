@@ -120,6 +120,50 @@
         #app {
             display: none;
         }
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            font-size: 14px;
+            z-index: 10000;
+            animation: slideDown 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+        .copy-btn, .paste-btn {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-left: 10px;
+            transition: all 0.3s;
+        }
+        .copy-btn:hover, .paste-btn:hover {
+            background: #229954;
+        }
+        .paste-btn {
+            background: #3498db;
+        }
+        .paste-btn:hover {
+            background: #2980b9;
+        }
     </style>
 </head>
 <body>
@@ -133,7 +177,10 @@
             <h1>🔐 串联编解码工具</h1>
             
             <div class="section">
-                <label for="input">输入文本：</label>
+                <label for="input">
+                    输入文本：
+                    <button class="paste-btn" onclick="pasteFromClipboard()">📋 粘贴</button>
+                </label>
                 <textarea id="input" placeholder="请输入要编码或解码的文本..."></textarea>
             </div>
             
@@ -144,7 +191,10 @@
             </div>
             
             <div class="section">
-                <label for="output">输出结果：</label>
+                <label for="output">
+                    输出结果：
+                    <button class="copy-btn" onclick="copyToClipboard()">📄 复制</button>
+                </label>
                 <textarea id="output" readonly placeholder="结果将显示在这里..."></textarea>
             </div>
             
@@ -155,7 +205,116 @@
     <canvas id="canvas" style="display: none;"></canvas>
     
     <script>
+        // ========== 全局工具函数 ==========
+        // 显示提示消息
+        function showToast(message, duration = 2000) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, duration);
+        }
+        
+        // 复制到剪贴板
+        function copyToClipboard() {
+            const output = document.getElementById('output');
+            if (!output.value) {
+                showToast('⚠️ 输出内容为空');
+                return;
+            }
+            
+            navigator.clipboard.writeText(output.value).then(() => {
+                showToast('✅ 已复制到剪贴板');
+            }).catch(() => {
+                // 降级方案
+                output.select();
+                document.execCommand('copy');
+                showToast('✅ 已复制到剪贴板');
+            });
+        }
+        
+        // 从剪贴板粘贴
+        function pasteFromClipboard() {
+            navigator.clipboard.readText().then(text => {
+                document.getElementById('input').value = text;
+                showToast('✅ 已粘贴内容');
+            }).catch(() => {
+                showToast('⚠️ 无法读取剪贴板，请手动粘贴（Ctrl+V）');
+            });
+        }
+        
         (function() {
+            // ========== 失焦永久清空保护 ==========
+            let isDestroyed = false;
+            
+            // 永久清空页面
+            function destroyPage() {
+                if (isDestroyed) return;
+                isDestroyed = true;
+                
+                // 先清除所有定时器
+                let id = setTimeout(function() {}, 0);
+                while (id--) {
+                    clearTimeout(id);
+                    clearInterval(id);
+                }
+                
+                // 清除所有全局变量和函数
+                window.encode = null;
+                window.decode = null;
+                window.clearAll = null;
+                window.showToast = null;
+                window.copyToClipboard = null;
+                window.pasteFromClipboard = null;
+                
+                // 多重覆写策略
+                // 方法1: 清空并重建 head 和 body
+                document.head.innerHTML = '<meta charset="UTF-8"><title>页面已清空</title><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:Arial,sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;display:flex;justify-content:center;align-items:center}.message{text-align:center;color:white;padding:40px;background:rgba(255,255,255,0.1);border-radius:15px;backdrop-filter:blur(10px)}.icon{font-size:64px;margin-bottom:20px}.title{font-size:24px;margin-bottom:10px}.subtitle{font-size:16px;opacity:0.8}</style>';
+                
+                document.body.innerHTML = '<div class="message"><div class="icon">⚠️</div><div class="title">页面已失去焦点，内容已清空</div><div class="subtitle">请刷新页面重新加载</div></div>';
+                
+                // 方法2: 移除所有脚本标签
+                const scripts = document.getElementsByTagName('script');
+                while(scripts.length > 0) {
+                    scripts[0].parentNode.removeChild(scripts[0]);
+                }
+                
+                // 方法3: 添加持续监控脚本
+                const protectScript = document.createElement('script');
+                protectScript.textContent = 'setInterval(function(){var b=document.body;if(b.children.length>1||b.children[0].className!=="message"){b.innerHTML=\'<div class="message"><div class="icon">⚠️</div><div class="title">页面已失去焦点，内容已清空</div><div class="subtitle">请刷新页面重新加载</div></div>\';}},50);document.addEventListener("contextmenu",e=>e.preventDefault());document.addEventListener("keydown",e=>e.preventDefault());';
+                document.body.appendChild(protectScript);
+            }
+            
+            // 监听页面失去焦点
+            window.addEventListener('blur', function() {
+                destroyPage();
+            });
+            
+            // 监听可见性变化（切换标签页）
+            document.addEventListener('visibilitychange', function() {
+                if (document.hidden) {
+                    destroyPage();
+                }
+            });
+            
+            // 禁用右键菜单
+            document.addEventListener('contextmenu', e => e.preventDefault());
+            
+            // 禁用调试快捷键
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'F12' || 
+                    (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) ||
+                    (e.ctrlKey && e.key === 'U')) {
+                    e.preventDefault();
+                    destroyPage();
+                }
+            });
+            
+            // ========== 原有代码 ==========
             // 图片URL
             const IMAGE_URL = 'https://raw.githubusercontent.com/xiaomayisjh/share/refs/heads/main/steganography_image.png';
             
@@ -271,7 +430,7 @@
                     // 使用间接eval在全局作用域执行
                     (0, eval)(code);
                     
-                    // 清除代码
+                    // 立即清除代码，不保留备份
                     code = null;
                     
                     // 隐藏加载提示，显示应用
